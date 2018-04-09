@@ -11,17 +11,13 @@ while read line ; do
   read input < /dev/tty
 
   if [ "$input" = "y" ] ; then
+    if grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/friend_catalog$$ ; then
+      mv /tmp/friend_catalog$$ $CATALOG_LOCATION
+      echo "Your (now) former friend has been removed."
+    fi
+    
     break
   fi
 done < /tmp/friend_results$$
 
 rm /tmp/friend_results$$
-
-if [ "$input" = "y" ] ; then
-  if grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/friend_catalog$$ ; then
-    mv /tmp/friend_catalog$$ $CATALOG_LOCATION
-    echo "Your (now) former friend has been removed."
-  fi
-
-  [ ! -s $CATALOG_LOCATION ] && echo "Your friend catalog is empty." || echo "Could not remove friend."
-fi
