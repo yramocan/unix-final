@@ -1,30 +1,30 @@
 trap "{ ./catalog; } " SIGINT
 query=$1
 
-grep -i "$query" $CATALOG_LOCATION > /tmp/matches$$
-if [ ! -s /tmp/matches$$ ] ; then
+grep -i "$query" $CATALOG_LOCATION > /tmp/friend_results$$
+
+if [ ! -s /tmp/friend_results$$ ] ; then
   echo "Could not find any friend similar to $query."
   exit 1
 fi
 
 while read line ; do
   echo "$line" | tr % "\n"
-  printf "Edit this friend? (y/n): "
-  read answer < /dev/tty
 
-  [ "$answer" = "y" ] && break || exit 0
-done < /tmp/matches$$
+  printf "Would you like to edit this friend? (y/n): "
+  read input < /dev/tty
 
-rm /tmp/matches$$
+  [ "$input" = "y" ] && break || exit 0
+done < /tmp/friend_results$$
 
-echo "$line" | tr "%" "\012" > /tmp/editor$$
-echo "Enter changes with ${EDITOR:=/usr/bin/nano}"
+rm /tmp/friend_results$$
+echo "$line" | tr "%" "\n" > /tmp/friend_editor$$
 
-$EDITOR /tmp/editor$$
+: ${EDITOR:=/usr/bin/vi}
+$EDITOR /tmp/friend_editor$$
 
-grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/catalog$$
+grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/friend_catalog$$
+{ tr "\n" "%" < /tmp/friend_editor$$; echo; } >> /tmp/friend_catalog$$
 
-{ tr "\012" "%" < /tmp/editor$$; echo; } >> /tmp/catalog$$
-
-sort /tmp/catalog$$ -o $CATALOG_LOCATION
-rm /tmp/catalog$$ /tmp/editor$$
+sort /tmp/friend_catalog$$ -o $CATALOG_LOCATION
+rm /tmp/friend_catalog$$ /tmp/friend_editor$$

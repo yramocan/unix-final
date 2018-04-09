@@ -1,11 +1,11 @@
-grep -i "$1" $CATALOG_LOCATION > /tmp/matches$$
+grep -i "$1" $CATALOG_LOCATION > /tmp/friend_results$$
 
-if [ ! -s /tmp/matches$$ ] ; then
+if [ ! -s /tmp/friend_results$$ ] ; then
   echo "Did not find any matches."
 else
   while read line ; do
     echo "$line" | tr % "\n"
-  done < /tmp/matches$$
+  done < /tmp/friend_results$$
 fi
 
-rm /tmp/matches$$
+rm /tmp/friend_results$$

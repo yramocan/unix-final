@@ -1,25 +1,25 @@
-grep -i "$1" $CATALOG_LOCATION > /tmp/matches$$
+grep -i "$1" $CATALOG_LOCATION > /tmp/friend_results$$
 
-if [ ! -s /tmp/matches$$ ] ; then
+if [ ! -s /tmp/friend_results$$ ] ; then
   echo "Could not find friends similar to $1"
   exit 1
 fi
 
 while read line ; do
   echo "$line" | tr % "\n"
-  printf "Remove this friend? (y/n): "
+  printf "Would you like to remove this friend? (y/n): "
   read input < /dev/tty
 
   if [ "$input" = "y" ] ; then
     break
   fi
-done < /tmp/matches$$
+done < /tmp/friend_results$$
 
-rm /tmp/matches$$
+rm /tmp/friend_results$$
 
 if [ "$input" = "y" ] ; then
-  if grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/catalog$$ ; then
-    mv /tmp/catalog$$ $CATALOG_LOCATION
+  if grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/friend_catalog$$ ; then
+    mv /tmp/friend_catalog$$ $CATALOG_LOCATION
     echo "Your (now) former friend has been removed."
   fi
 

@@ -1,6 +1,14 @@
 : ${CATALOG_LOCATION:=$HOME/friend_catalog}
 export CATALOG_LOCATION
 
+if [ ! -e "$CATALOG_LOCATION" ] ; then
+  echo "Could not find $CATALOG_LOCATION."
+  printf "Would you like to create it? (y/n): "
+  read input
+
+  [ "$input" = "n" ] && exit 1 || touch $CATALOG_LOCATION
+fi
+
 interactive=TRUE
 
 NAME=""
@@ -21,11 +29,6 @@ done
 if [ "$interactive" = FALSE ] ; then
   ./add -n "$NAME" -a "$AGE" -r "$RATING"
   exit 0
-fi
-
-if [ ! -e "$CATALOG_LOCATION" ] ; then
-  echo "Could not find $CATALOG_LOCATION."
-  exit 1
 fi
 
 if [ $"$#" -gt 0 ] ; then
