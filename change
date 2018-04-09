@@ -1,0 +1,30 @@
+trap "{ ./catalog; } " SIGINT
+query=$1
+
+grep -i "$query" $CATALOG_LOCATION > /tmp/matches$$
+if [ ! -s /tmp/matches$$ ] ; then
+  echo "Could not find any friend similar to $query."
+  exit 1
+fi
+
+while read line ; do
+  echo "$line" | tr % "\n"
+  printf "Edit this friend? (y/n): "
+  read answer < /dev/tty
+
+  [ "$answer" = "y" ] && break || exit 0
+done < /tmp/matches$$
+
+rm /tmp/matches$$
+
+echo "$line" | tr "%" "\012" > /tmp/editor$$
+echo "Enter changes with ${EDITOR:=/usr/bin/nano}"
+
+$EDITOR /tmp/editor$$
+
+grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/catalog$$
+
+{ tr "\012" "%" < /tmp/editor$$; echo; } >> /tmp/catalog$$
+
+sort /tmp/catalog$$ -o $CATALOG_LOCATION
+rm /tmp/catalog$$ /tmp/editor$$

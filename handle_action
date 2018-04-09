@@ -1,0 +1,2 @@
+read query
+[ -z "$query" ] && echo "Cancelled $1." || ./$1 "$query"

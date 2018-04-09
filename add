@@ -1,0 +1,43 @@
+interactive=TRUE
+
+NAME=""
+AGE=""
+RATING=""
+
+while getopts n:a:r opt; do
+  case "$opt" in
+    n) NAME="$OPTARG" ; interactive=FALSE;;
+    a) AGE="$OPTARG";;
+    r) RATING="$OPTARG";;
+    ?) echo "Could not add friend to catalog."
+    exit 1;;
+  esac
+done
+
+if [ "$interactive" = FALSE ] ; then
+  echo "$NAME%$AGE%$RATING" >> $CATALOG_LOCATION
+  sort -o $CATALOG_LOCATION $CATALOG_LOCATION
+  echo "Added $NAME to your friends catalog."
+  echo
+  exit 0
+fi
+
+trap "{ ./catalog; } " SIGINT
+
+echo "Enter friend information:"
+
+record=""
+
+i=0
+while [ "$i" -lt "3" ] ; do
+  printf ">> "
+  read line
+
+  [ -n "$line" ] && record="$record$line%" || break
+
+  i=$((i+1))
+done
+
+echo "$record" >> $CATALOG_LOCATION
+sort -o $CATALOG_LOCATION $CATALOG_LOCATION
+echo "New friend has been added to your friend catalog.\n"

@@ -1,0 +1,27 @@
+grep -i "$1" $CATALOG_LOCATION > /tmp/matches$$
+
+if [ ! -s /tmp/matches$$ ] ; then
+  echo "Could not find friends similar to $1"
+  exit 1
+fi
+
+while read line ; do
+  echo "$line" | tr % "\n"
+  printf "Remove this friend? (y/n): "
+  read input < /dev/tty
+
+  if [ "$input" = "y" ] ; then
+    break
+  fi
+done < /tmp/matches$$
+
+rm /tmp/matches$$
+
+if [ "$input" = "y" ] ; then
+  if grep -i -v "^$line$" $CATALOG_LOCATION > /tmp/catalog$$ ; then
+    mv /tmp/catalog$$ $CATALOG_LOCATION
+    echo "Your (now) former friend has been removed."
+  fi
+
+  [ ! -s $CATALOG_LOCATION ] && echo "Your friend catalog is empty." || echo "Could not remove friend."
+fi

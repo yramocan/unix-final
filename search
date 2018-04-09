@@ -1,0 +1,11 @@
+grep -i "$1" $CATALOG_LOCATION > /tmp/matches$$
+
+if [ ! -s /tmp/matches$$ ] ; then
+  echo "Did not find any matches."
+else
+  while read line ; do
+    echo "$line" | tr % "\n"
+  done < /tmp/matches$$
+fi
+
+rm /tmp/matches$$

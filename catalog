@@ -1,0 +1,61 @@
+: ${CATALOG_LOCATION:=$HOME/friend_catalog}
+export CATALOG_LOCATION
+
+interactive=TRUE
+
+NAME=""
+AGE=""
+RATING=""
+
+while getopts :n:a:r opt; do
+  case "$opt" in
+    n) NAME="$OPTARG"
+    interactive=FALSE;;
+    a) AGE="$OPTARG";;
+    r) RATING="$OPTARG";;
+    ?) echo "Usage: catalog -n <NAME> -a <AGE> -r <RATING>"
+    exit 1;;
+  esac
+done
+
+if [ "$interactive" = FALSE ] ; then
+  ./add -n "$NAME" -a "$AGE" -r "$RATING"
+  exit 0
+fi
+
+if [ ! -e "$CATALOG_LOCATION" ] ; then
+  echo "Could not find $CATALOG_LOCATION."
+  exit 1
+fi
+
+if [ $"$#" -gt 0 ] ; then
+  ./search "$@"
+  exit
+fi
+
+while true ; do
+  echo "How would you like to manage your list of friends?"
+  echo
+  echo "1) Add a friend"
+  echo "2) Remove a friend"
+  echo "3) Change a friend's information"
+  echo "4) Search for a friend"
+  echo "5) Display your list of friends"
+  echo "6) Exit"
+
+  printf "\nEnter the number of your desired action: "
+
+  read selection
+  case "$selection" in
+    1) ./add;;
+    2) printf "Please enter the name of the friend you want to remove: "
+    ./handle_action "remove";;
+    3) printf "Who would you like to change?: "
+    ./handle_action "change";;
+    4) printf "Enter a search term: "
+    ./handle_action "search";;
+    5) ./list;;
+    6) exit 0;;
+    *) echo "Select from the options listed above.";;
+  esac
+done
