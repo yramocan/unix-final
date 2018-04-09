@@ -26,18 +26,19 @@ trap "{ ./catalog; } " SIGINT
 
 echo "Enter friend information:"
 
-record=""
+friend=""
 
 i=0
 while [ "$i" -lt "3" ] ; do
   printf ">> "
   read line
 
-  [ -n "$line" ] && record="$record$line%" || break
+  [ -n "$line" ] && friend="$friend$line%" || break
 
   i=$((i+1))
 done
 
-echo "$record" >> $CATALOG_LOCATION
+echo "$friend" >> $CATALOG_LOCATION
 sort -o $CATALOG_LOCATION $CATALOG_LOCATION
-echo "New friend has been added to your friend catalog.\n"
+echo "New friend has been added to your friend catalog."
+echo
